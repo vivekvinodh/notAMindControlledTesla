@@ -10,3 +10,7 @@ source ./venv/bin/activate
 pip install -U pip
 pip install -U numpy
 pip install -U pyserial
+pip install -U pandas
+pip install -U ipython
+pip install -U sklearn
+pip install -U scipy
