@@ -61,14 +61,10 @@ _PLATFORM_TO_PORTS = {
 	'cygwin': '/dev/ttyUSB*'
 }
 
-def find_port():
+def find_ports():
   possible_platforms = [platform for platform in _PLATFORM_TO_PORTS if sys.platform.startswith(platform)]
-  print(possible_platforms)
   platform = possible_platforms[0] if possible_platforms else None
-  print(platform)
-  possible_ports = glob.glob(_PLATFORM_TO_PORTS[platform]) if platform in _PLATFORM_TO_PORTS else None
-  print(possible_ports)
-  return possible_ports[0] if possible_ports else None
+  return glob.glob(_PLATFORM_TO_PORTS[platform]) if platform in _PLATFORM_TO_PORTS else []
 
 class OpenBCIBoard(object):
   """
@@ -81,13 +77,13 @@ class OpenBCIBoard(object):
     daisy: Enable or disable daisy module and 16 chans readings
   """
 
-  def __init__(self, port=None, baud=115200, filter_data=True,
+  def __init__(self, port, baud=115200, filter_data=True,
     scaled_output=True, daisy=False, log=True, timeout=None):
     self.log = log # print_incoming_text needs log
     self.streaming = False
     self.baudrate = baud
     self.timeout = timeout
-    self.port = port or find_port()
+    self.port = port
     print("Connecting to V3 at port %s" %(port))
     self.ser = serial.Serial(port= port, baudrate = baud, timeout=timeout)
 

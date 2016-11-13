@@ -27,9 +27,8 @@ def collect(collector, options):
   collector.stop()
 
 if __name__ == '__main__':
-  
-# TODO: allow direct specification via args.
-  port = open_bci.find_port()
+  ports = open_bci.find_ports()
+  port = ports[0] if ports else None
   
   assert len(sys.argv) == 2, "Error: Please provide filename."
   assert port, "Error: Could not find serial port in use."
