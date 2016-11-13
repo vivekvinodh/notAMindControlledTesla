@@ -29,12 +29,12 @@ class StreamingInference(object):
   def handle_sample(self, sample):
     y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
     self.num_gos += 1 if y == 'go' else 0
-    num_samples += 1
-    if num_samples >= self.num_samples_per_write:
-      msg = bytes(num_gos > self.threshold '1' else '0')
+    self.num_samples += 1
+    if self.num_samples >= self.num_samples_per_write:
+      msg = bytes('1' if self.num_gos > self.threshold else '0', 'utf8')
       self.num_gos = 0
       self.num_samples = 0
-      print("Writing '{}' to serial...".format(msg)
+      print("Writing '{}' to serial...".format(msg))
       self.arduino.write(msg)
 
 if __name__ == '__main__':
@@ -58,7 +58,7 @@ if __name__ == '__main__':
   # Set ports.
   # TODO: remove hardcoded values.
   bci_port = '/dev/tty.usbserial-DQ007SU3'
-  arduino_port = '/dev/tty.usbmodem1411' 
+  arduino_port = '/dev/tty.usbmodem1421'
 
   print("Starting connection with OpenBCI on port={}...".format(bci_port))
   board = open_bci.OpenBCIBoard(port=bci_port)
