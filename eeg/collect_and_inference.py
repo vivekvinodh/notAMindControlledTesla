@@ -43,7 +43,7 @@ if __name__ == '__main__':
   print("\nModel score: {}\n".format(model.score(Xte, Yte)))
 
   print("Starting connection with Arduino...")
-  arduino_ser = serial.Serial(arduino_port)
+  arduino_ser = serial.Serial(arduino_port, baudrate=57600)
 
   streamer = inference.StreamingInference(model, board, arduino_ser)
 
