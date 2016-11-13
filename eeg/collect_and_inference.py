@@ -8,36 +8,38 @@ from sklearn import neighbors
 import collect
 import train
 from util import open_bci
-
-# TODO: extract some of this logic out for re-use.
+from util import csv_collector
 
 if __name__ == '__main__':
-  assert len(sys.argv) == 2, "Must provide filename as argument."
-  
-  # Read in file.
-  data = train.read_clean(sys.argv[1], 'go', 'stop')
-  
-  # Split into train/test
-  Xtr, Xte, Ytr, Yte = train.prepare_train_test(data)
-  
-  # Prepare submodels
-  ica = decomposition.FastICA(n_components=6)
-  nn = neighbors.KNeighborsClassifier(n_neighbors=3)
-  model = train.TransformClassifier(ica, nn)
-  
-  # Train model
-  model.fit(Xtr, Ytr)
-  print("\nModel score: {}\n".format(model.score(Xte, Yte)))
-
-  # Set ports.
   # TODO: remove hardcoded values.
-  # ports = open_bci.find_ports()
-  # print("Available ports: {}".format(ports))
   bci_port = '/dev/tty.usbserial-DQ007SU3'
-  arduino_port = '/dev/tty.usbmodem1421' 
+  arduino_port = '/dev/tty.usbmodem1421'
+
+  assert len(sys.argv) == 2, "Error: Please provide filename."
+
+  filename = sys.argv[1]
+
+  print("Writing to file: {}".format(filename))
+  print("Using Port: {}".format(port))
+
+  labels = ['go', 'stop']
 
   print("Starting connection with OpenBCI on port={}...".format(bci_port))
   board = open_bci.OpenBCIBoard(port=bci_port)
+  collector = csv_collector.CSVCollector(filename, board)
+  collector_options = CollectionOptions(3, 1, 3, 3, labels)
+  print("Collecting data...")
+  collect(collector, collector_options)
+
+  data = train.read_clean(filename, labels[0], labels[1])
+
+  Xtr, Xte, Ytr, Yte = train.prepare_train_test(data)
+
+  ica = decomposition.FastICA(n_components=6)
+  nn = neighbors.KNeighborsClassifier(n_neighbors=5)
+  model = train.TransformClassifier(ica, nn)
+  model.fit(Xtr, Ytr)
+  print("\nModel score: {}\n".format(model.score(Xte, Yte)))
 
   print("Starting connection with Arduino...")
   arduino_ser = serial.Serial(arduino_port)
