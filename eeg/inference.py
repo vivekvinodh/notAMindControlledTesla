@@ -10,6 +10,9 @@ import train
 from util import open_bci
 
 # TODO: extract some of this logic out for re-use.
+class StreamingTransformer(object):
+  def __init__(self):
+    pass
 
 if __name__ == '__main__':
   assert len(sys.argv) == 2, "Must provide filename as argument."
