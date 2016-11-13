@@ -1,5 +1,4 @@
-## Setup
-This assumes that python 3.5+ and virtualenv are installed.
+## Setup This assumes that python 3.5+ and virtualenv are installed.
 Execute `source init_env.sh`. This will create and start a python virtualenv
 and install all necessary packages. This assumes that a linux based system is
 being used -- if not, you're on your own.
@@ -19,4 +18,8 @@ This will train a model solely for the purposes of seeing if accuracy is high
 enough to consider using.
 
 ## Inference
-TBD
+To run inference, be sure to plug both the Arduino and BCI bluetooth receiver in.
+Run `python inference.py [filename]` where filename is the file with data to
+train a model.
+
+Note: the serial ports are hardcoded for now. Intending to fix at a later time.
