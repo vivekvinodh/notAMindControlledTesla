@@ -54,19 +54,9 @@ if __name__ == '__main__':
   board = open_bci.OpenBCIBoard(port=bci_port)
 
   print("Starting connection with Arduino...")
-  arduino_ser = serial.Serial(arduino_port)
+  arduino_ser = serial.Serial(arduino_port, baudrate=57600)
 
-<<<<<<< HEAD
-  def handle_sample(sample):
-    y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
-    print("Prediction: {}".format(y))
-    s = '1' if y == 'go' else '0'
-    ser_val = bytes(s, 'utf8')
-    print("Writing '{}' to serial...".format(ser_val))
-    arduino_ser.write(ser_val)
-=======
   streamer = StreamingInference(model, board, arduino)
->>>>>>> collect-infer
 
   print("Starting stream...")
   streamer.start(handle_sample)
