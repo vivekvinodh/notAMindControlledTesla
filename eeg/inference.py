@@ -9,23 +9,33 @@ import collect
 import train
 from util import open_bci
 
+_SAMPLE_FREQ = 250
+_ARDUINO_MAX_FREQ = 1
+
 class StreamingInference(object):
   """Handles an input stream -> transform -> outputstream."""
-  def __init__(self, model, board, arduino):
+  def __init__(self, model, board, arduino, threshold=150):
     self.model = model
     self.board = board
     self.arduino = arduino
+    self.threshold = threshold
+    self.num_gos = 0
+    self.num_samples = 0
+    self.num_samples_per_write = _SAMPLE_FREQ / float(_ARDUINO_MAX_FREQ)
 
   def start(self):
     self.board.start(self.handle_sample)
   
   def handle_sample(self, sample):
     y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
-    print("Prediction: {}".format(y))
-    s = '1' if y == 'go' else '0'
-    ser_val = bytes(s, 'utf8')
-    print("Writing '{}' to serial...".format(ser_val))
-    self.arduino.write(ser_val)
+    self.num_gos += 1 if y == 'go' else 0
+    num_samples += 1
+    if num_samples >= self.num_samples_per_write:
+      msg = bytes(num_gos > self.threshold '1' else '0')
+      self.num_gos = 0
+      self.num_samples = 0
+      print("Writing '{}' to serial...".format(msg)
+      self.arduino.write(msg)
 
 if __name__ == '__main__':
   assert len(sys.argv) == 2, "Must provide filename as argument."
