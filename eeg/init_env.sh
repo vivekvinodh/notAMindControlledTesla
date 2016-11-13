@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Create environment.
-virtualenv venv
+virtualenv venv -p `which python3`
 
 # Start environment.
 source ./venv/bin/activate
