@@ -6,7 +6,7 @@ const int DOWN = 1300;
 const int UP = 1100;
 const int ERR = 1700;
 
-int channels[6] = {1200, 1200, 1325, 1200, 1200, 1200};
+int channels[6] = {1200, 1200, 1200, 1200, 1200, 1200};
 //channels[0] = CH1 - RELIABLE 1200-FLAT 1300-DOWN 1100-UP
 //channels[1] = CH2 - RELIABLE 1200-FLAT 1300-DOWN 1100-UP
 //channels[2] = CH3
@@ -54,14 +54,12 @@ void relay(void){
 
 void scaleUp(int index, int origin, int destination){
   for(int i = origin; i <= destination; i++){
-    //delay(1);
     channels[index] = i;
   }
 }
 
 void scaleDown(int index, int origin, int destination){
   for(int i = origin; i >= destination; i--){
-    delay(1);
     channels[index] = i;
   }
 }
