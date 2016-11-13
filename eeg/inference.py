@@ -44,8 +44,8 @@ if __name__ == '__main__':
   def handle_sample(sample):
     y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
     print("Prediction: {}".format(y))
-    s = 1 if y == 'go' else 0
-    ser_val = bytes(chr(s), 'utf8')
+    s = '1' if y == 'go' else '0'
+    ser_val = bytes(s, 'utf8')
     print("Writing '{}' to serial...".format(ser_val))
     arduino_ser.write(ser_val)
 
