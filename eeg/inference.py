@@ -33,7 +33,7 @@ if __name__ == '__main__':
   # ports = open_bci.find_ports()
   # print("Available ports: {}".format(ports))
   bci_port = '/dev/tty.usbserial-DQ007SU3'
-  arduino_port = '/dev/tty.usbmodem1421' 
+  arduino_port = '/dev/tty.usbmodem1411' 
 
   print("Starting connection with OpenBCI on port={}...".format(bci_port))
   board = open_bci.OpenBCIBoard(port=bci_port)
