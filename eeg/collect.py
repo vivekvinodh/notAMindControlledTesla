@@ -20,6 +20,7 @@ def collect(collector, options):
   for i in range(options.num_cycles):
     for thought in options.thoughts:
       print("Think '{}'...".format(thought))
+      collector.tag('0')
       time.sleep(options.waiting_period)
       collector.tag(thought)
       time.sleep(options.collection_period)
