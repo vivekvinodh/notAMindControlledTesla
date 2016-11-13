@@ -21,16 +21,15 @@ if __name__ == '__main__':
   filename = sys.argv[1]
 
   print("Writing to file: {}".format(filename))
-  print("Using Port: {}".format(port))
 
   labels = ['go', 'stop']
 
   print("Starting connection with OpenBCI on port={}...".format(bci_port))
   board = open_bci.OpenBCIBoard(port=bci_port)
   collector = csv_collector.CSVCollector(filename, board)
-  collector_options = CollectionOptions(3, 1, 3, 3, labels)
+  collector_options = collect.CollectionOptions(3, 1, 3, 3, labels)
   print("Collecting data...")
-  collect(collector, collector_options)
+  collect.collect(collector, collector_options)
 
   data = train.read_clean(filename, labels[0], labels[1])
 
