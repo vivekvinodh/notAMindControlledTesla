@@ -14,7 +14,7 @@ from util import csv_collector
 if __name__ == '__main__':
   # TODO: remove hardcoded values.
   bci_port = '/dev/tty.usbserial-DQ007SU3'
-  arduino_port = '/dev/tty.usbmodem1421'
+  arduino_port = '/dev/tty.usbmodem1411'
 
   assert len(sys.argv) == 2, "Error: Please provide filename."
 
@@ -27,7 +27,7 @@ if __name__ == '__main__':
   print("Starting connection with OpenBCI on port={}...".format(bci_port))
   board = open_bci.OpenBCIBoard(port=bci_port)
   collector = csv_collector.CSVCollector(filename, board)
-  collector_options = collect.CollectionOptions(3, 1, 3, 3, labels)
+  collector_options = collect.CollectionOptions(3, 1, 30, 1, labels)
   print("Collecting data...")
   collect.collect(collector, collector_options)
 

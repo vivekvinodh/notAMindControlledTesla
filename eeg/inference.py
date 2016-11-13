@@ -14,7 +14,7 @@ _ARDUINO_MAX_FREQ = 1
 
 class StreamingInference(object):
   """Handles an input stream -> transform -> outputstream."""
-  def __init__(self, model, board, arduino, threshold=150):
+  def __init__(self, model, board, arduino, threshold=25):
     self.model = model
     self.board = board
     self.arduino = arduino
@@ -25,7 +25,7 @@ class StreamingInference(object):
 
   def start(self):
     self.board.start(self.handle_sample)
-  
+
   def handle_sample(self, sample):
     y = self.model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
     self.num_gos += 1 if y == 'go' else 0
@@ -58,7 +58,7 @@ if __name__ == '__main__':
   # Set ports.
   # TODO: remove hardcoded values.
   bci_port = '/dev/tty.usbserial-DQ007SU3'
-  arduino_port = '/dev/tty.usbmodem1421'
+  arduino_port = '/dev/tty.usbmodem1411'
 
   print("Starting connection with OpenBCI on port={}...".format(bci_port))
   board = open_bci.OpenBCIBoard(port=bci_port)
