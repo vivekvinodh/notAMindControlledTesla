@@ -11,7 +11,7 @@ int channels[6] = {1200, 1200, 1200, 1200, 1200, 1200};
 //channels[4] = CH5
 //channels[5] = CH6
 
-char inputCommand; // 0 == stop; 1 == go
+byte inputCommand; // 0 == stop; 1 == go
 String this_line;
 void setup() {
   // put your setup code here, to run once:
@@ -66,8 +66,7 @@ void readBuf(){
         //wait for new char
     }
     inputCommand = Serial.read();
-    this_line = inputCommand;
-    if(atoi(this_line.c_str()) == 0){
+    if(inputCommand == 0x00){
       Serial.println("stop");
       //update channel
       scaleUp(1,channels[1],1300);
@@ -76,7 +75,7 @@ void readBuf(){
       //channels[0] = 1100;
     }
     else {
-      if(atoi(this_line.c_str()) == 1){
+      if(inputCommand == 0x01){
         Serial.println("go");
         //update channel
         scaleDown(1, channels[1], 1100);
