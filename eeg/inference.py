@@ -1,9 +1,11 @@
 import sys
 
+import numpy as np
 import serial
 from sklearn import decomposition
 from sklearn import neighbors
 
+import collect
 import train
 from util import open_bci
 
@@ -40,9 +42,12 @@ if __name__ == '__main__':
   arduino_ser = serial.Serial(arduino_port)
 
   def handle_sample(sample):
-    y = model.predict(sample.channel_data)
+    y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
+    print("Prediction: {}".format(y))
     s = 1 if y == 'go' else 0
-    arduino_ser.write(bytes(chr(s), 'utf8'))
+    ser_val = bytes(chr(s), 'utf8')
+    print("Writing '{}' to serial...".format(ser_val))
+    arduino_ser.write(ser_val)
 
   print("Starting stream...")
   board.start(handle_sample)
