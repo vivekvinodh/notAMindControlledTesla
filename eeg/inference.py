@@ -9,10 +9,23 @@ import collect
 import train
 from util import open_bci
 
-# TODO: extract some of this logic out for re-use.
-class StreamingTransformer(object):
-  def __init__(self):
-    pass
+class StreamingInference(object):
+  """Handles an input stream -> transform -> outputstream."""
+  def __init__(self, model, board, arduino):
+    self.model = model
+    self.board = board
+    self.arduino = arduino
+
+  def start(self):
+    board.start(self.handle_sample)
+  
+  def handle_sample(self, sample):
+    y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
+    print("Prediction: {}".format(y))
+    s = 1 if y == 'go' else 0
+    ser_val = bytes(chr(s), 'utf8')
+    print("Writing '{}' to serial...".format(ser_val))
+    arduino_ser.write(ser_val)
 
 if __name__ == '__main__':
   assert len(sys.argv) == 2, "Must provide filename as argument."
@@ -34,8 +47,6 @@ if __name__ == '__main__':
 
   # Set ports.
   # TODO: remove hardcoded values.
-  # ports = open_bci.find_ports()
-  # print("Available ports: {}".format(ports))
   bci_port = '/dev/tty.usbserial-DQ007SU3'
   arduino_port = '/dev/tty.usbmodem1421' 
 
@@ -45,13 +56,7 @@ if __name__ == '__main__':
   print("Starting connection with Arduino...")
   arduino_ser = serial.Serial(arduino_port)
 
-  def handle_sample(sample):
-    y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
-    print("Prediction: {}".format(y))
-    s = 1 if y == 'go' else 0
-    ser_val = bytes(chr(s), 'utf8')
-    print("Writing '{}' to serial...".format(ser_val))
-    arduino_ser.write(ser_val)
+  streamer = StreamingInference(model, board, arduino)
 
   print("Starting stream...")
-  board.start(handle_sample)
+  streamer.start(handle_sample)
