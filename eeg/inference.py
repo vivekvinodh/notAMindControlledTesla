@@ -59,4 +59,4 @@ if __name__ == '__main__':
   streamer = StreamingInference(model, board, arduino_ser)
 
   print("Starting stream...")
-  streamer.start(handle_sample)
+  streamer.start()
