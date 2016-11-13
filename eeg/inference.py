@@ -17,7 +17,7 @@ class StreamingInference(object):
     self.arduino = arduino
 
   def start(self):
-    board.start(self.handle_sample)
+    self.board.start(self.handle_sample)
   
   def handle_sample(self, sample):
     y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
@@ -25,7 +25,7 @@ class StreamingInference(object):
     s = 1 if y == 'go' else 0
     ser_val = bytes(chr(s), 'utf8')
     print("Writing '{}' to serial...".format(ser_val))
-    arduino_ser.write(ser_val)
+    self.arduino.write(ser_val)
 
 if __name__ == '__main__':
   assert len(sys.argv) == 2, "Must provide filename as argument."
@@ -48,7 +48,7 @@ if __name__ == '__main__':
   # Set ports.
   # TODO: remove hardcoded values.
   bci_port = '/dev/tty.usbserial-DQ007SU3'
-  arduino_port = '/dev/cu.usbmodem1411' 
+  arduino_port = '/dev/tty.usbmodem1411' 
 
   print("Starting connection with OpenBCI on port={}...".format(bci_port))
   board = open_bci.OpenBCIBoard(port=bci_port)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
   print("Starting connection with Arduino...")
   arduino_ser = serial.Serial(arduino_port, baudrate=57600)
 
-  streamer = StreamingInference(model, board, arduino)
+  streamer = StreamingInference(model, board, arduino_ser)
 
   print("Starting stream...")
   streamer.start(handle_sample)
