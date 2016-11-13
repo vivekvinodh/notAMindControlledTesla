@@ -22,8 +22,8 @@ class StreamingInference(object):
   def handle_sample(self, sample):
     y = model.predict(np.array(sample.channel_data).reshape(1, -1))[0]
     print("Prediction: {}".format(y))
-    s = 1 if y == 'go' else 0
-    ser_val = bytes(chr(s), 'utf8')
+    s = '1' if y == 'go' else '0'
+    ser_val = bytes(s, 'utf8')
     print("Writing '{}' to serial...".format(ser_val))
     self.arduino.write(ser_val)
 
