@@ -2,6 +2,9 @@
 #define PULSE 300
 
 const int outPin = 10;
+const int DOWN = 1300;
+const int UP = 1100;
+const int ERR = 1700;
 
 int channels[6] = {1200, 1200, 1200, 1200, 1200, 1200};
 //channels[0] = CH1 - RELIABLE 1200-FLAT 1300-DOWN 1100-UP
@@ -11,11 +14,12 @@ int channels[6] = {1200, 1200, 1200, 1200, 1200, 1200};
 //channels[4] = CH5
 //channels[5] = CH6
 
-byte inputCommand; // 0 == stop; 1 == go
+char inputCommand; // 0 == stop; 1 == go
 String this_line;
 void setup() {
   // put your setup code here, to run once:
   pinMode(outPin, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(outPin, HIGH);
   Timer1.initialize(18000);
   Timer1.attachInterrupt(relay);
@@ -42,13 +46,15 @@ void loop() {
 
 void relay(void){
   for(int i = 0; i < 6; i++){
+    //Serial.print(channels[i]);
     channel(channels[i]);
   }
+  //Serial.println("--------");
 }
 
 void scaleUp(int index, int origin, int destination){
   for(int i = origin; i <= destination; i++){
-    delay(1);
+    //delay(1);
     channels[index] = i;
   }
 }
@@ -66,28 +72,27 @@ void readBuf(){
         //wait for new char
     }
     inputCommand = Serial.read();
-    if(inputCommand == 0x00){
-      Serial.println("stop");
+    this_line = inputCommand;
+    if(atoi(this_line.c_str()) == 0){
       //update channel
-      scaleUp(1,channels[1],1300);
-      scaleDown(0,channels[0],1100);
-      //channels[1] = 1300;
-      //channels[0] = 1100;
+      Serial.println("stop");
+      scaleUp(1,channels[1],DOWN);
+      scaleDown(0,channels[0],UP);
+      //channels[1] = DOWN;
+      //channels[0] = UP;
     }
     else {
-      if(inputCommand == 0x01){
-        Serial.println("go");
+      if(atoi(this_line.c_str()) == 1){
         //update channel
-        scaleDown(1, channels[1], 1100);
-        scaleUp(0, channels[0], 1300);
-        //channels[1] = 1100;
-        //channels[0] = 1300;
+        Serial.println("go");
+        scaleDown(1, channels[1], UP);
+        scaleUp(0, channels[0], DOWN);
+        //channels[1] = UP;
+        //channels[0] = DOWN;
       }
       else{
-        Serial.println("ERROR");
         //assume crit fail, reset actuators
-        channels[0] = 1200;
-        channels[1] = 1200; 
+        channels[3] = ERR;
       }
     }
   }
